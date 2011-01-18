@@ -78,6 +78,15 @@ h2
 	margin-bottom: 15px;
 	font-size: 24px;
 	color: #666;
+	cursor: pointer;
+}
+
+em
+{
+	color: #888;
+	margin-bottom: 15px;
+	font-size: 10px;
+	display: block;
 }
 
 a
@@ -87,32 +96,12 @@ a
 	display: block	;
 }
 
-a.redlink
-{
-	color: #ff003c;
-}
+a.redlink { color: #ff003c; }
+.breaker { clear: both; }
 
-dt
+pre
 {
-	float: left;
-	width: 200px;
-	font-weight: bold;
-}
-
-dd
-{
-	padding-left: 200px;
-	margin-bottom: 10px;
-}
-
-ul#linkedin-friends li
-{
-	display: inline;
-	float: left;
-	margin-left: 5px;
-}
-
-.breaker
-{
-	clear: both;
+	overflow: hidden;
+	margin-bottom: 15px;
+	display: none;
 }

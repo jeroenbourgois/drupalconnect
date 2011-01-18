@@ -1,37 +1,55 @@
 <?php
-require('assets/libs/druxml.class.php');
+  ini_set("display_errors", 1);
+  
+  include('config.php');
+  require('assets/libs/drupalconnect.php');
+  require('assets/libs/xmlrpc.php');
 
-include('config.php');
+  $dc = new DrupalConnect($endpoint, $localDomain, $api_key);
 
-$talkative = TRUE; // spit out debugging information to screen?
-
-// create connection
-$drupalSession = new Drupal_connect( $localDomain, $apiKey, $endPoint, $credentials, $func, $param, $talkative );
-$retVal = $drupalSession->dru_connect($endPoint);
-$drupalSession->anon_session_id = $retVal['sessid'];
-if ($drupalSession->anon_session_id) {
-  //$drupalSession comes back as an array. It looks like this:
-  //Array ( [sessid] => 3eaec0962d42c7a7bb42b642551e8e0a [user] => Array ( [uid] => 0 [hostname] => 123.123.2.3 [roles] => Array ( [1] => anonymous user ) [session] => [cache] => 0 ) )
-
-  if ($talkative) print '<pre>Anon session id: '.$drupalSession->anon_session_id.'</pr>';
-
-  $drupalSession->credentials = $auth_user;
-  // connect for the first time as an authenticated user BEFORE we go getting node data
-  $data = $drupalSession->auth_connect($localDomain, $endPoint, $drupalSession->anon_session_id, $apiKey, $drupalSession->credentials, 'user.login', $param, $talkative);
-  if ($talkative) print_r($data);
-
-  // now we go get node data
-  $data = $drupalSession->auth_connect($localDomain, $endPoint, $drupalSession->anon_session_id, $apiKey, $drupalSession->credentials, $func, $param, $talkative);
-  print_r($data);
-}
-
-/**
-* Function for generating a random string, used for
-* generating a token for the XML-RPC session
-*/
-function getUniqueCode($length = "") {
-  $code = md5(uniqid(rand(), true));
-  if ($length != "") return substr($code, 0, $length);
-  else return $code;
-}
+  $session_id = $dc->init_session();
+  $login = $dc->login($session_id, "admin", "admin");
+  $node = $dc->get_view("proximity_site");
+  
+  //$result = XMLRPC_request("proxit.local", "/services/xmlrpc", "recipe.all");
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>drupalconnect demo</title>
+  <link rel="stylesheet" href="assets/css/main.css" type="text/css" />
+  
+  <script src="assets/js/jquery-1.4.4.min.js"></script>
+  <script src="assets/js/drupalconnect.js"></script>
+</head>
+<body>
+  <h1>Demo for drupalconnect (xml/rpc)</h1>
+  
+  <em>Click the headings to collapse code blocks</em>
+  
+  <h2>Init drupal connect session</h2>
+  <pre>session_id: <?php print $session_id; ?></pre>
+
+  <h2>Login with user</h2>
+  <pre><?php print_r($login); ?></pre>
+  
+  <h2>Fetch a node</h2>
+  <pre><?php print_r($node); ?></pre>
+  
+  <h2>Output</h2>
+  <pre>
+<?php
+/*
+  foreach ($result[1] as $node) {
+    if(is_array($node)){
+          print $node["title"] . "<br />";
+    }
+  }
+  */
+  var_dump($result);
+?>
+  </pre>
+</body>
+</html>
+
