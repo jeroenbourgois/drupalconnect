@@ -1,8 +1,8 @@
 drupalconnect
 =============
 
-1. Usage
+1. About
 --------
-Not much here at the moment, just checkout the demo in /demo
+These files are to be used with the tutorial on my posterous, about connecting an external site with Drupal through XMLRPC.
 
-Feel free to fork!
+Read the article at <http://jeroenbourgois.posterous.com/>
