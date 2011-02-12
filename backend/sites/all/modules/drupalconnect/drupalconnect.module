@@ -1,0 +1,68 @@
+<?php
+/*
+* Implementation of hook_disable()
+* Perform necessary actions before module is disabled. (like clear the drupalconnect:methods cache)
+*/
+function drupalconnect_disable() {
+  cache_clear_all('drupalconnect:methods', 'cache');
+}
+/*
+* Implementation of hook_enable()
+* Perform necessary actions after module is enabled. (like clear the drupalconnect:methods cache)
+*/
+function drupalconnect_enable() {
+  cache_clear_all('drupalconnect:methods', 'cache');
+}
+
+/*
+ * Implementation of hook_service()
+ * Required by all server modules
+ * Returns array defining all the methods available in the service
+ */
+function drupalconnect_service() {
+  return array(
+    array(
+      "#method"   => "drupalconnect.get.pages",
+      "#callback" => "drupalconnect_get_pages",
+      "#return"   => "array",
+      "#help"     => "Returns not a list of pages"
+    ),
+  );
+}
+
+/**
+ * Get the pages through our view
+ */
+function drupalconnect_get_pages() {
+	// get the view
+	$view = views_get_view("drupalconnect");
+	
+	// execute it
+	$view->execute();
+	
+	// create an array to store our result in
+	$result = array();
+	
+	// loop through the view result
+	foreach ($view->result as $row) {
+		// each row contains the node id
+		// use the drupal helper function to load the full object
+		$node = node_load($row->nid);
+		
+		// now this is why I wanted to do it myself,
+		// now we have the node, we can filter all the data
+		// we want and leave behind the rest
+		$clean_node = new stdClass();
+		
+		$clean_node->title = $node->title;
+		$clean_node->body = $node->body;
+		
+		// store our clean, lightweight node
+		array_push($result, $clean_node);
+	}
+	
+	// return the result (the clean one)
+	return $result;
+}
+
+?>

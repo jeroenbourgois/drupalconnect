@@ -1,0 +1,5 @@
+; $Id: drupalconnect.info, v 0.1 $
+name = Drupal Connect
+description = Provide a service for an external site
+package = Custom modules
+core = 6.x
